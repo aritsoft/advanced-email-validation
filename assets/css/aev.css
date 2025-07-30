@@ -1,0 +1,90 @@
+.aev-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1em;
+    font-size: 14px;
+}
+
+.aev-history-table thead {
+    background: #f8f9fa;
+}
+
+.aev-history-table th,
+.aev-history-table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #e1e1e1;
+}
+
+.aev-history-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.aev-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 12px;
+}
+
+.aev-green {
+    background-color: #28a745;
+}
+
+.aev-orange {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.aev-red {
+    background-color: #dc3545;
+}
+
+@media screen and (max-width: 600px) {
+
+    .aev-history-table,
+    .aev-history-table thead,
+    .aev-history-table tbody,
+    .aev-history-table th,
+    .aev-history-table td,
+    .aev-history-table tr {
+        display: block;
+    }
+
+    .aev-history-table thead {
+        display: none;
+    }
+
+    .aev-history-table td {
+        position: relative;
+        padding-left: 50%;
+        border: none;
+        border-bottom: 1px solid #eee;
+    }
+
+    .aev-history-table td:before {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 45%;
+        white-space: nowrap;
+        font-weight: bold;
+    }
+
+    .aev-history-table td:nth-of-type(1):before {
+        content: "Email";
+    }
+
+    .aev-history-table td:nth-of-type(2):before {
+        content: "Status";
+    }
+
+    .aev-history-table td:nth-of-type(3):before {
+        content: "Substatus";
+    }
+
+    .aev-history-table td:nth-of-type(4):before {
+        content: "Checked At";
+    }
+}
