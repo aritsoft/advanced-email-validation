@@ -1,11 +1,7 @@
 <?php
 function aev_render_form() {
-    $user_id = aev_get_user_identifier();
-    $used  = function_exists('get_aev_user_daily_check_usage') ? get_aev_user_daily_check_usage($user_id) : 0;
-    $limit = function_exists('get_aev_email_check_limit') ? get_aev_email_check_limit() : 10;
-    $remaining = max(0, $limit - $used);
-
-    ob_start(); ?>
+    ob_start(); 
+    $remaining = get_remaining_email_credits(); ?>
     <div class="aev-form-wrapper">
         <div class="aev-usage">
             <small>You have <?php echo $remaining; ?> email verifications remaining.</small>            

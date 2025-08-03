@@ -16,6 +16,7 @@ class AEV_DB_Schema {
             smtp_check TINYINT(1) DEFAULT 0,
             status ENUM('Passed', 'Failed', 'Invalid') DEFAULT 'Invalid',
             response TEXT DEFAULT NULL,
+            is_bulk TINYINT(1) DEFAULT 0,
             checked_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY  (id),
             KEY email_idx (email),

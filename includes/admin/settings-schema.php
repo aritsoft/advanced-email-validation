@@ -36,6 +36,16 @@ function aev_get_settings_schema() {
             'description'       => 'Enter disposable domains per line',
             'field_type'        => 'textarea',
         ],
+        'aev_email_providers' => [
+            'type'              => 'string',
+            'rows'              => 10,
+            'cols'              => 75,
+            'default'           => "gmail.com, yahoo.com, hotmail.com, outlook.com, icloud.com",
+            'sanitize_callback' => 'sanitize_text_field',
+            'label'             => 'Major Provider',
+            'description'       => 'Enter major email providers to skip',
+            'field_type'        => 'textarea',
+        ],
         'aev_enable_debugging' => [
             'type'              => 'boolean',
             'default'           => 0,

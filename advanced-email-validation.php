@@ -24,6 +24,7 @@ class AdvancedEmailValidation {
         define('AEV_NEUTRINO_API_ID', get_option('aev_neutrino_api_user_id'));
         define('AEV_NEUTRINO_API_KEY', get_option('aev_neutrino_api_key'));
         define('AEV_HISTORY_TABLE', $GLOBALS['wpdb']->prefix . 'email_checker_history');
+        define('AEV_FREE_VALIDATION_LIMIT', 10);
     }
 
     private function load_includes() {
@@ -34,6 +35,7 @@ class AdvancedEmailValidation {
         require_once AEV_PLUGIN_PATH . 'includes/ajax/handler.php';
         require_once AEV_PLUGIN_PATH . 'includes/shortcodes/form.php';
         require_once AEV_PLUGIN_PATH . 'includes/shortcodes/history.php';
+        require_once AEV_PLUGIN_PATH . 'includes/classes/bulk-import-validation.php';
         require_once AEV_PLUGIN_PATH . 'includes/classes/meta_box_subscription_email_validation.php';
     }
 

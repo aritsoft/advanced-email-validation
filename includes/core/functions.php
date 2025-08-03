@@ -4,7 +4,10 @@ defined('ABSPATH') || exit;
 function aev_enqueue_scripts() {
     wp_enqueue_style('aev-styles', AEV_PLUGIN_URL . 'assets/css/aev.css');
     wp_enqueue_script('aev-script', AEV_PLUGIN_URL . 'assets/js/checker.js', ['jquery'], null, true);
-    wp_localize_script('aev-script', 'emailCheckerAjax', ['ajax_url' => admin_url('admin-ajax.php')]);
+    wp_localize_script('aev-script', 'emailCheckerAjax', [
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('aev_email_nonce')
+    ]);
 }
 
 function aev_get_user_ip() {
@@ -26,7 +29,7 @@ function aev_get_user_identifier() {
 }
 
 function get_aev_email_check_limit() {
-    $aev_free_email_limit = get_option('aev_free_email_limit', 10);
+    $aev_free_email_limit = get_option('aev_free_email_limit', AEV_FREE_VALIDATION_LIMIT);
     // Check if the user is logged in
     if ( ! is_user_logged_in() ) {
         return $aev_free_email_limit; // Not logged in → Free limit
@@ -69,7 +72,7 @@ function aev_is_limit_reached($user_id, $limit = 3)
     return $used >= $limit;
 }
 
-function get_aev_user_daily_check_usage($user_id) {
+function aev_user_check_monthly_usage($user_id) {
     global $wpdb;
     // $today = date('Y-m-d');
     // return $wpdb->get_var(
@@ -89,4 +92,67 @@ function get_aev_user_daily_check_usage($user_id) {
             $month
         )
     );
+}
+
+function get_remaining_email_credits() {
+    $user_id = aev_get_user_identifier();
+    $used  = function_exists('aev_user_check_monthly_usage') ? aev_user_check_monthly_usage($user_id) : 0;
+    $limit = function_exists('get_aev_email_check_limit') ? get_aev_email_check_limit() : AEV_FREE_VALIDATION_LIMIT;
+    $remaining = max(0, $limit - $used);
+    return $remaining;       
+}
+
+function bulk_passed_varification($num_days) {
+    global $wpdb;
+    $user_id = aev_get_user_identifier();
+    $passed_emails = $wpdb->get_col(
+        $wpdb->prepare(
+            "SELECT email FROM " . AEV_HISTORY_TABLE . "
+            WHERE user_id_or_ip = %d
+            AND checked_at >= DATE_SUB(NOW(), INTERVAL $num_days DAY)
+            AND status = %s", $user_id, 'Passed'
+        )
+    );
+
+    $passed_email_Widget = "<h3>Bulk Verifications Passed - Last {$num_days} Days</h3>";
+
+    if(count($passed_emails)>0) {
+        foreach ($passed_emails as $email) {
+            $passed_email_Widget .= '<p>'.esc_html($email) . '</p>';
+        }
+
+        $passed_email_Widget .= '<form method="post" action="'.site_url('/').'wp-admin/admin-post.php">
+        <input type="hidden" name="action" value="export_passed_emails_csv">
+        <button type="submit" class="button button-secondary"><img draggable="false" role="img" class="emoji" alt="⬇" src="https://s.w.org/images/core/emoji/16.0.1/svg/2b07.svg"> Export Passed Emails</button>
+        </form>';
+    } 
+    echo $passed_email_Widget;
+}
+
+function bulk_failed_varification($num_days) {
+    global $wpdb;
+    $user_id = aev_get_user_identifier();
+    $passed_emails = $wpdb->get_col(
+        $wpdb->prepare(
+            "SELECT email FROM " . AEV_HISTORY_TABLE . "
+            WHERE user_id_or_ip = %d
+            AND checked_at >= DATE_SUB(NOW(), INTERVAL $num_days DAY)
+            AND (status = %s OR status = %s)", $user_id, 'Failed', 'Invalid'
+        )
+    );
+
+    $failed_email_Widget = "<h3>Bulk Verifications Failed - Last {$num_days} Days</h3>";
+
+    if(count($passed_emails)>0) {
+        foreach ($passed_emails as $email) {
+            $failed_email_Widget .= '<p>'.esc_html($email) . '</p>';
+        }
+
+        $failed_email_Widget .= '<form method="post" action="'.site_url('/').'wp-admin/admin-post.php">
+        <input type="hidden" name="action" value="export_failed_emails_csv">
+        <button type="submit" class="button button-secondary"><img draggable="false" role="img" class="emoji" alt="⬇" src="https://s.w.org/images/core/emoji/16.0.1/svg/2b07.svg"> Export Failed Emails</button>
+        </form>';
+    } 
+
+    echo $failed_email_Widget;
 }

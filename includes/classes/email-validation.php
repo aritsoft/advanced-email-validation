@@ -14,12 +14,13 @@ class AEV_Validate_Email {
         $user_id = aev_get_user_identifier();
         $ace_limit = get_aev_email_check_limit();
         $disposable_list = $this->load_disposable_domains();
+        $major_providers = $this->load_major_email_providers();
 
         if (aev_is_limit_reached($user_id, $ace_limit)) {
             wp_send_json_error([
                 'status' => 'limit_reached', 
                 'email' => $email,
-                'message' => 'You have reached the limit email checks. <a href="'.site_url().'/pricing" target="_blank">Upgrade your plan</a>'
+                'message' => 'You have no more credits to verify email address. <a href="'.site_url().'/pricing" target="_blank">Upgrade your plan</a>'
             ]);
         }
 
@@ -28,16 +29,6 @@ class AEV_Validate_Email {
             $this->email_syntax = false;
             $this->final_status = 'Invalid';
             $this->aev_store_email_validation($email, false, false, false, '', false, $this->final_status, ['note' => 'The address provided is not in a valid format.']);
-            $this->aev_store_email_validation(
-                $email, 
-                false, 
-                false, 
-                false, 
-                "", 
-                false, 
-                $this->final_status, 
-                ['note' => 'The address provided is not in a valid format.', 'event'=>'invalid_syntax']
-            );
             wp_send_json_error([
                 'status' => 'invalid_syntax', 
                 'email' => $email,
@@ -90,7 +81,6 @@ class AEV_Validate_Email {
         }
 
         // Step 4: Major Providers
-        $major_providers = ['gmail123.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'icloud.com'];
         if (in_array($domain, $major_providers)) {
             $this->provider = $domain;
             $this->final_status = 'Passed';
@@ -159,6 +149,15 @@ class AEV_Validate_Email {
             return [];
         }
         $lines = preg_split('/[\r\n,]+/', $disposable_domains);
+        return array_filter(array_map('strtolower', array_map('trim', $lines)));
+    }
+
+    public function load_major_email_providers() {
+        $major_email_providers = get_option('aev_email_providers', '');
+        if (empty($major_email_providers)) {
+            return [];
+        }
+        $lines = preg_split('/[\r\n,]+/', $major_email_providers);
         return array_filter(array_map('strtolower', array_map('trim', $lines)));
     }
 

@@ -17,7 +17,6 @@ jQuery(document).ready(function($) {
                 $('#aev-loader').show();
             },
             success: function(response) {
-                console.log(response);
                 let data = response.data || {};
                 let resultHtml = '';
                 if (data.status == 'Passed') {
@@ -47,6 +46,39 @@ jQuery(document).ready(function($) {
             error: function(xhr, status, error) {
                 $('#aev-loader').hide();
                 $('#email-checker-result').html(`<div style="color:red;">❌ AJAX failed: ${error}</div>`);
+            },
+        });
+    });
+
+    $('#bulkimportvalidationfrm').on('submit', function(e) {
+        e.preventDefault();
+
+        const form = $('#bulkimportvalidationfrm')[0];
+        const formData = new FormData(form);
+
+        formData.append('action', 'handle_ajax_requests');
+        formData.append('load_data', 'bluk_email_validate');
+        formData.append('nonce', emailCheckerAjax.nonce);
+
+        $.ajax({
+            type: 'POST',
+            url: emailCheckerAjax.ajax_url,
+            data: formData,
+            contentType: false,
+            processData: false,
+            beforeSend: function() {
+                $('#aev-loader').show();
+            },
+            success: function(response) {
+                $('#aev-loader').hide();
+                let resultHtml = '';
+                if(response.success) {
+                    resultHtml = `<div style="color:green;"><strong>Reason: ${response.data.message}</strong></div>`;
+                    $('#email-checker-result').html(resultHtml);
+                } else {
+                    resultHtml = `<div style="color:red;"><strong>Reason: ${response.data.message}</strong></div>`;
+                    $('#email-checker-result').html(resultHtml);
+                }
             },
         });
     });
