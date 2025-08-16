@@ -1,90 +1,529 @@
+body.page-id-365 {
+  visibility: hidden;
+}
+.aev-dashboard .elementor-shortcode {
+  display: flex;
+}
+.aev-dashboard .elementor-shortcode .pms-account-navigation {
+  top: 0;
+  width: 250px;
+  height: 100svh;
+  position: fixed;
+  background: var(--e-global-color-primary);
+}
+.admin-bar .aev-dashboard .pms-account-navigation .dash-logo {
+  height: 70px;
+  padding: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+.admin-bar .aev-dashboard .pms-account-navigation .dash-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.aev-dashboard .elementor-shortcode .pms-account-navigation ul {
+  padding: 0;
+  list-style: none;
+}
+.aev-dashboard .elementor-shortcode .pms-account-navigation ul li a {
+  color: #fff;
+  display: flex;
+  padding: 10px 20px;
+}
+.aev-dashboard
+  .elementor-shortcode
+  .pms-account-navigation
+  ul
+  li
+  a.pms-account-navigation-link--active {
+  font-weight: bold;
+  color: var(--e-global-color-primary);
+  background: var(--e-global-color-accent);
+}
+.dash-header {
+  display: none;
+}
+.aev-container .dash-header {
+  top: 0;
+  z-index: 9;
+  width: 100%;
+  left: 250px;
+  height: 70px;
+  display: flex;
+  position: fixed;
+  padding: 12px 20px;
+  align-items: center;
+  background: var(--e-global-color-primary);
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+}
+.aev-container .dash-header h1 {
+  margin: 0;
+  color: #fff;
+  font-size: 1.25rem;
+}
+.admin-bar .aev-dashboard .pms-account-navigation,
+.admin-bar .aev-container .dash-header {
+  top: 32px;
+}
+.aev-container {
+  flex-grow: 1;
+  background: #f5faff;
+  padding: 100px 30px 30px;
+  width: calc(100% - 250px);
+  margin-left: 250px !important;
+  min-height: calc(100svh - 30px);
+}
+.aev-container #pms_edit-profile-form {
+  padding: 20px;
+  max-width: 600px;
+  background: #fff;
+  border-radius: 10px;
+}
+.aev-container #pms_edit-profile-form .pms-form-fields-wrapper li:last-child {
+  margin-top: 1rem;
+}
+.aev-form-wrapper {
+  margin: auto;
+  max-width: 500px;
+}
+.aev-usage {
+  padding: 6px 12px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  background: #ddf1ff;
+  color: var(--e-global-color-primary);
+}
+.aev-form-outer {
+  overflow: hidden;
+  position: relative;
+  padding: 40px 30px;
+  border-radius: 20px;
+  border: 1px solid #f1f1f1;
+}
+.aev-container .aev-form-outer {
+  margin-bottom: 40px;
+  box-shadow: 0px 10px 30px 0px rgba(0, 0, 0, 0.1);
+}
+.aev-form-outer svg {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  margin: 0 auto 20px;
+  color: var(--e-global-color-primary);
+}
+.aev-form-outer form input {
+  outline: none;
+  font-size: 16px;
+  min-height: 48px;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--e-global-color-text);
+  border: 1px solid #d4d4d4 !important;
+}
+.aev-form-outer form input::placeholder {
+  color: #909090;
+}
+.aev-form-outer form button {
+  width: 100%;
+  border: none;
+  min-height: 48px;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+.aev-form-outer form button:hover,
+.aev-form-outer form button:focus {
+  background: #065cc6 !important;
+}
+.aev-form-outer #aev-loader {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  backdrop-filter: blur(2px);
+  background: rgba(255, 255, 255, 0.1);
+}
+.aev-form-outer .loader {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 50px;
+  height: 50px;
+  margin: auto;
+  position: absolute;
+  border-radius: 50%;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid var(--e-global-color-primary);
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+#email-checker-result:empty {
+  display: none;
+}
+#email-checker-result {
+  margin-top: 20px;
+  padding: 40px 30px;
+  border-radius: 20px;
+  border: 1px solid #f1f1f1;
+}
+#email-checker-result .aev-alert {
+  gap: 5px;
+  display: flex;
+  font-size: 14px;
+  padding: 10px 12px;
+  border-radius: 5px;
+  line-height: normal;
+  align-items: center;
+}
+#email-checker-result .aev-alert svg {
+  flex-shrink: 0;
+}
+#email-checker-result .aev-alert.aev-success,
+.aev-green {
+  color: #155724;
+  border-color: #c3e6cb;
+  background-color: #d4edda;
+}
+#email-checker-result .aev-alert.aev-danger,
+.aev-red {
+  color: #721c24;
+  border-color: #f5c6cb;
+  background-color: #f8d7da;
+}
+#email-checker-result .aev-alert.aev-warning,
+.aev-orange {
+  color: #856404;
+  border-color: #ffeeba;
+  background-color: #fff3cd;
+}
+#email-checker-result ul {
+  padding: 0;
+  display: flex;
+  gap: 15px 10px;
+  flex-wrap: wrap;
+  margin: 20px 0 0;
+  list-style: none;
+}
+#email-checker-result ul li {
+  font-size: 14px;
+  line-height: normal;
+  width: calc(50% - 5px);
+}
+#email-checker-result ul li strong {
+  width: 100%;
+  display: flex;
+  color: #136ad5;
+  margin-bottom: 3px;
+  line-height: initial;
+}
+#email-checker-result ul li:last-child {
+  width: 100%;
+}
+#email-checker-result ul li a {
+  color: var(--e-global-color-primary);
+}
 .aev-history-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1em;
-    font-size: 14px;
+  width: 100%;
+  font-size: 14px;
+  margin-top: 1rem;
+  border-collapse: collapse;
 }
-
 .aev-history-table thead {
-    background: #f8f9fa;
+  color: #fff;
+  background: var(--e-global-color-primary);
 }
-
 .aev-history-table th,
 .aev-history-table td {
-    padding: 10px;
-    text-align: left;
-    border: 1px solid #e1e1e1;
+  border: none;
+  text-align: left;
+  padding: 10px 16px;
 }
-
-.aev-history-table tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
+.aev-history-table td {
+  background: #fff;
+  border-bottom: 1px solid #f1f1f1;
 }
-
+.aev-history-table tbody > tr:nth-child(odd) > td,
+.aev-history-table tbody > tr:nth-child(odd) > th {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+.aev-history-table tbody tr:hover > td,
+.aev-history-table tbody tr:hover > th {
+  background-color: #f1f7fc;
+}
 .aev-tag {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 5px;
-    color: #fff;
-    font-size: 12px;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  display: inline-block;
 }
-
-.aev-green {
-    background-color: #28a745;
-}
-
-.aev-orange {
-    background-color: #ffc107;
-    color: #000;
-}
-
-.aev-red {
-    background-color: #dc3545;
-}
-
 @media screen and (max-width: 600px) {
-
-    .aev-history-table,
-    .aev-history-table thead,
-    .aev-history-table tbody,
-    .aev-history-table th,
-    .aev-history-table td,
-    .aev-history-table tr {
-        display: block;
+  .aev-history-table,
+  .aev-history-table thead,
+  .aev-history-table tbody,
+  .aev-history-table th,
+  .aev-history-table td,
+  .aev-history-table tr {
+    display: block;
+  }
+  .aev-history-table thead {
+    display: none;
+  }
+  .aev-history-table td {
+    border: none;
+    position: relative;
+    padding-left: 40%;
+    border-bottom: 1px solid #eee;
+  }
+  .aev-history-table td:before {
+    top: 10px;
+    left: 10px;
+    width: 30%;
+    font-weight: bold;
+    position: absolute;
+    white-space: nowrap;
+  }
+  .aev-history-table td:nth-of-type(1):before {
+    content: "Email";
+  }
+  .aev-history-table td:nth-of-type(2):before {
+    content: "Status";
+  }
+  .aev-history-table td:nth-of-type(3):before {
+    content: "Event";
+  }
+  .aev-history-table td:nth-of-type(4):before {
+    content: "Checked At";
+  }
+}
+.pms-account-subscription-details-table {
+  width: 100%;
+  max-width: 600px;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 12px;
+  border-collapse: collapse;
+}
+.pms-account-subscription-details-table tr {
+  border-bottom: 1px solid #f1f1f1;
+}
+.pms-account-subscription-details-table td {
+  border: none;
+  font-size: 15px;
+  padding: 16px 20px;
+  vertical-align: middle;
+  background: none !important;
+}
+.pms-account-subscription-details-table td:first-child {
+  width: 40%;
+  border: none;
+  font-weight: 500;
+}
+.pms-account-subscription-details-table .status-active {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e9d57;
+}
+.pms-account-subscription-action-link {
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 6px;
+  margin-right: 10px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+.pms-account-subscription-action-link__cancel {
+  color: #000 !important;
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+}
+.pms-account-subscription-action-link__cancel:hover {
+  background-color: #e0e0e0;
+}
+.pms-account-subscription-action-link__abandon {
+  border: none;
+  color: #fff !important;
+  background-color: #ff4d4f;
+}
+.pms-account-subscription-action-link__abandon:hover {
+  background-color: #e03e3f;
+}
+#pms-payment-history {
+  width: 100%;
+  font-size: 14px;
+  max-width: 600px;
+  border-collapse: collapse;
+}
+#pms-payment-history thead {
+  display: none;
+}
+#pms-payment-history tbody tr {
+  display: block;
+  background: #fff;
+  margin-bottom: 20px;
+  border-radius: 10px;
+}
+#pms-payment-history td {
+  border: none;
+  display: flex;
+  padding: 16px 20px;
+  background: transparent;
+  justify-content: space-between;
+  border-bottom: 1px solid #f1f1f1;
+}
+#pms-payment-history td:last-child {
+  border-bottom: none;
+}
+.pms-payment-id::before {
+  content: "ID:";
+  font-weight: 600;
+}
+.pms-payment-subscription-plan::before {
+  content: "Subscription Plan:";
+  font-weight: 600;
+}
+.pms-payment-amount::before {
+  content: "Amount:";
+  font-weight: 600;
+}
+.pms-payment-date::before {
+  content: "Date / Time:";
+  font-weight: 600;
+}
+.pms-payment-status::before {
+  content: "Status:";
+  font-weight: 600;
+  color: #000;
+}
+#pms-payment-history td::before {
+  flex: 0 0 45%;
+}
+.status-completed {
+  color: #047857;
+  font-weight: bold;
+}
+.bulk_import_validation_section {
+  gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.bulk_import_validation_section .bulk-email-import-box {
+  flex: 1;
+  min-width: 320px;
+  padding: 40px 30px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0px 10px 30px 0px rgba(0, 0, 0, 0.1);
+}
+.bulk_import_validation_section .bulk-email-import-box h3 {
+  gap: 8px;
+  display: flex;
+  margin: 0 0 10px;
+  font-weight: bold;
+  font-size: 1.15rem;
+  align-items: center;
+}
+.bulk_import_validation_section .bulk-email-import-box p {
+  font-size: 14px;
+  margin: 0 0 1rem;
+}
+.bulk_import_validation_section .bulk-email-import-box p strong {
+  color: #28a745;
+}
+.bulk_import_validation_section .bulk-email-import-box #bulkimportvalidationfrm input[type="file"] {
+  font-size: 14px;
+}
+.bulk_import_validation_section .bulk-email-import-box #bulkimportvalidationfrm input[type="file"]::-webkit-file-upload-button {
+  padding: 0 15px;
+  font-size: 14px;
+  cursor: pointer;
+  line-height: 40px;
+  border-radius: 6px;
+  background: #fff;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  display: inline-block;
+  border: 1px solid #f1f1f1;
+}
+.bulk_import_validation_section .bulk-email-import-box #bulkimportvalidationfrm .button-primary {
+  width: 100%;
+  border: none;
+  border-radius: 6px;
+}
+.bulk_import_validation_section .bulk-email-import-box #bulkimportvalidationfrm .button-primary:hover,
+.bulk_import_validation_section .bulk-email-import-box #bulkimportvalidationfrm .button-primary:focus {
+  background: #065cc6 !important;
+}
+.bulk_import_validation_section .bulk-email-import-box .notice {
+  margin-top: 10px;
+  font-size: 0.85rem;
+}
+#aev-loader {
+  font-size: 14px;
+  margin-top: 15px;
+  color: #0073e6;
+  font-weight: bold;
+}
+.bulk_import_validation_section .bulk_validation_right {
+  flex: 1;
+  gap: 20px;
+  display: flex;
+  min-width: 300px;
+  flex-direction: column;
+}
+.bulk_import_validation_section .bulk_validation_right h3 {
+  margin: 0px;
+  font-size: 1rem;
+  font-weight: bold;
+}
+.bulk_import_validation_section .bulk_validation_right .bulk-passed_varification {
+  padding: 15px;
+  border-radius: 8px;
+  background: #e6f4ea;
+  border-left: 5px solid #28a745;
+}
+.bulk_import_validation_section .bulk_validation_right .bulk-failed-varification {
+  padding: 15px;
+  border-radius: 8px;
+  background: #fdecea;
+  border-left: 5px solid #dc3545;
+}
+.aev-container [type=button], .aev-container[type=submit], .aev-container button {
+    gap: 5px;
+    border: none;
+    display: flex;
+    font-size: 14px;
+    min-height: 42px;
+    align-items: center;
+    justify-content: center;
+}
+@media (min-width: 768px) {
+    .aev-responsive-table {
+        overflow-x: auto;
     }
-
-    .aev-history-table thead {
-        display: none;
-    }
-
-    .aev-history-table td {
-        position: relative;
-        padding-left: 50%;
-        border: none;
-        border-bottom: 1px solid #eee;
-    }
-
-    .aev-history-table td:before {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        width: 45%;
+    .aev-responsive-table table {
         white-space: nowrap;
-        font-weight: bold;
     }
-
-    .aev-history-table td:nth-of-type(1):before {
-        content: "Email";
-    }
-
-    .aev-history-table td:nth-of-type(2):before {
-        content: "Status";
-    }
-
-    .aev-history-table td:nth-of-type(3):before {
-        content: "Substatus";
-    }
-
-    .aev-history-table td:nth-of-type(4):before {
-        content: "Checked At";
-    }
+}
+@media (max-width: 768px) {
+  .bulk_import_validation_section {
+    flex-direction: column;
+  }
 }

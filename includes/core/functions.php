@@ -25,7 +25,9 @@ function aev_get_user_ip() {
 }
 
 function aev_get_user_identifier() {
-    return is_user_logged_in() ? get_current_user_id() : aev_get_user_ip();
+    $user_id = is_user_logged_in() ? get_current_user_id() : aev_get_user_ip();
+    $user_id = (string) $user_id;
+    return $user_id;
 }
 
 function get_aev_email_check_limit() {
@@ -64,43 +66,27 @@ function get_aev_email_check_limit() {
     return $aev_free_email_limit;   
 }
 
-function aev_is_limit_reached($user_id, $limit = 3) 
-{
-    global $wpdb;
-    $today = date('Y-m-d');
-    $used = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM ".AEV_HISTORY_TABLE." WHERE user_id_or_ip = %d AND DATE(checked_at) = %s", $user_id, $today));
-    return $used >= $limit;
-}
-
-function aev_user_check_monthly_usage($user_id) {
-    global $wpdb;
-    // $today = date('Y-m-d');
-    // return $wpdb->get_var(
-    //     $wpdb->prepare("SELECT COUNT(*) FROM ".AEV_HISTORY_TABLE." WHERE user_id_or_ip = %d AND DATE(checked_at) = %s", $user_id, $today)
-    // );
-
-    $year  = date('Y');
-    $month = date('m');
-    return $wpdb->get_var(
-        $wpdb->prepare(
-            "SELECT COUNT(*) FROM " . AEV_HISTORY_TABLE . " 
-            WHERE user_id_or_ip = %d 
-            AND YEAR(checked_at) = %d 
-            AND MONTH(checked_at) = %d",
-            $user_id,
-            $year,
-            $month
-        )
-    );
-}
-
 function get_remaining_email_credits() {
+    global $wpdb;
+
     $user_id = aev_get_user_identifier();
-    $used  = function_exists('aev_user_check_monthly_usage') ? aev_user_check_monthly_usage($user_id) : 0;
-    $limit = function_exists('get_aev_email_check_limit') ? get_aev_email_check_limit() : AEV_FREE_VALIDATION_LIMIT;
-    $remaining = max(0, $limit - $used);
-    return $remaining;       
+    $total   = (int) get_aev_email_check_limit();
+
+    if(is_user_logged_in()) {
+        $used = (int) ( get_user_meta( $user_id, 'email_quota_used', true ) ?: 0 );
+    } else {
+        $table = esc_sql( AEV_HISTORY_TABLE );
+        $used  = (int) $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT COUNT(*) FROM {$table} WHERE user_id_or_ip = %s",
+                $user_id
+            )
+        );
+    }    
+    
+    return max( 0, $total - $used );       
 }
+
 
 function bulk_passed_varification($num_days) {
     global $wpdb;
@@ -108,9 +94,9 @@ function bulk_passed_varification($num_days) {
     $passed_emails = $wpdb->get_col(
         $wpdb->prepare(
             "SELECT email FROM " . AEV_HISTORY_TABLE . "
-            WHERE user_id_or_ip = %d
+            WHERE user_id_or_ip = %s
             AND checked_at >= DATE_SUB(NOW(), INTERVAL $num_days DAY)
-            AND status = %s", $user_id, 'Passed'
+            AND status = %s AND is_bulk= %d", $user_id, 'Passed', 1
         )
     );
 
@@ -126,25 +112,25 @@ function bulk_passed_varification($num_days) {
         <button type="submit" class="button button-secondary"><img draggable="false" role="img" class="emoji" alt="⬇" src="https://s.w.org/images/core/emoji/16.0.1/svg/2b07.svg"> Export Passed Emails</button>
         </form>';
     } 
-    echo $passed_email_Widget;
+    return $passed_email_Widget;
 }
 
 function bulk_failed_varification($num_days) {
     global $wpdb;
     $user_id = aev_get_user_identifier();
-    $passed_emails = $wpdb->get_col(
+    $failed_emails = $wpdb->get_col(
         $wpdb->prepare(
             "SELECT email FROM " . AEV_HISTORY_TABLE . "
-            WHERE user_id_or_ip = %d
+            WHERE user_id_or_ip = %s
             AND checked_at >= DATE_SUB(NOW(), INTERVAL $num_days DAY)
-            AND (status = %s OR status = %s)", $user_id, 'Failed', 'Invalid'
+            AND (status = %s OR status = %s) AND is_bulk= %d", $user_id, 'Failed', 'Invalid', 1
         )
     );
 
     $failed_email_Widget = "<h3>Bulk Verifications Failed - Last {$num_days} Days</h3>";
 
-    if(count($passed_emails)>0) {
-        foreach ($passed_emails as $email) {
+    if(count($failed_emails)>0) {
+        foreach ($failed_emails as $email) {
             $failed_email_Widget .= '<p>'.esc_html($email) . '</p>';
         }
 
@@ -154,5 +140,5 @@ function bulk_failed_varification($num_days) {
         </form>';
     } 
 
-    echo $failed_email_Widget;
+    return $failed_email_Widget;
 }

@@ -7,42 +7,109 @@ class AEV_Email_History_Table extends WP_List_Table {
 
     public function get_columns() {
         return [
-            'email' => 'Email Address',
+            'cb'           => '<input type="checkbox" class="manage-column column-cb check-column" />',
+            'email'        => 'Email Address',
             'syntax_valid' => 'Syntax',
-            'mx_found' => 'MX Found',
-            'provider' => 'Domain',
-            'smtp_check' => 'SMTP',
-            'status' => 'Status',
-            'checked_at' => 'Checked At',
+            'mx_found'     => 'MX Found',
+            'provider'     => 'Domain',
+            'smtp_check'   => 'SMTP',
+            'status'       => 'Status',
+            'checked_at'   => 'Checked At',
         ];
+    }
+
+    public function get_sortable_columns() {
+        return [
+            'email'        => ['email', false],
+            'syntax_valid' => ['syntax_valid', false],
+            'mx_found'     => ['mx_found', false],
+            'provider'     => ['provider', false],
+            'smtp_check'   => ['smtp_check', false],
+            'status'       => ['status', false],
+            'checked_at'   => ['checked_at', false],
+        ];
+    }
+
+    public function get_bulk_actions() {
+        return [
+            'export' => 'Export Selected',
+            'delete' => 'Delete Selected',
+        ];
+    }
+
+    public function column_cb($item) {
+        return sprintf(
+            '<input type="checkbox" name="email_ids[]" value="%d" />',
+            intval($item['id'])
+        );
+    }
+
+    public function column_default($item, $column_name) {
+        switch ($column_name) {
+            case 'email':
+            case 'provider':
+            case 'status':
+            case 'checked_at':
+                return esc_html($item[$column_name]);
+            case 'syntax_valid':
+            case 'mx_found':
+            case 'smtp_check':
+                return $item[$column_name] ? '✔️' : '❌';
+            default:
+                return esc_html(print_r($item, true));
+        }
+    }
+
+    public function extra_tablenav($which) {
+        if ($which === 'top') {
+            ?>
+            <div class="alignleft actions">
+                <?php
+                // Add Export All Validations button inside the same form
+                wp_nonce_field('aev_export_csv_action', 'aev_export_csv_nonce');
+                submit_button('Export All Validations', 'secondary', 'aev_export_csv', false);
+                ?>
+            </div>
+            <?php
+        }
     }
 
     public function prepare_items() {
         global $wpdb;
         $table = AEV_HISTORY_TABLE;
 
-        $per_page = 20;
+        $per_page     = 10;
         $current_page = $this->get_pagenum();
-        $offset = ($current_page - 1) * $per_page;
+        $offset       = ($current_page - 1) * $per_page;
 
-        $columns = $this->get_columns();
-        $hidden = [];
-        $sortable = [];
+        $columns  = $this->get_columns();
+        $hidden   = [];
+        $sortable = $this->get_sortable_columns();
+        $this->_column_headers = [$columns, $hidden, $sortable];
+
+        $this->process_bulk_action();
 
         $search = (!empty($_REQUEST['s'])) ? sanitize_text_field($_REQUEST['s']) : '';
-
-        $where = '';
+        $where  = '';
         if ($search) {
-            $where = $wpdb->prepare("WHERE email LIKE %s", '%' . $wpdb->esc_like($search) . '%');
+            $like  = '%' . $wpdb->esc_like($search) . '%';
+            $where = $wpdb->prepare("WHERE email LIKE %s", $like);
         }
 
+        $orderby = !empty($_REQUEST['orderby']) ? sanitize_key($_REQUEST['orderby']) : 'id';
+        $allowed = array_keys($this->get_sortable_columns());
+        if (!in_array($orderby, $allowed)) {
+            $orderby = 'id';
+        }
+
+        $order = (!empty($_REQUEST['order']) && in_array(strtoupper($_REQUEST['order']), ['ASC', 'DESC'])) ? strtoupper($_REQUEST['order']) : 'DESC';
+
         $total_items = $wpdb->get_var("SELECT COUNT(*) FROM $table $where");
+        $results = $wpdb->get_results(
+            $wpdb->prepare("SELECT * FROM $table $where ORDER BY $orderby $order LIMIT %d OFFSET %d", $per_page, $offset),
+            ARRAY_A
+        );
 
-        $results = $wpdb->get_results("SELECT * FROM $table $where ORDER BY id DESC LIMIT $offset, $per_page", ARRAY_A);
-
-        $hidden = [];
-        $sortable = ['email'];
-        $this->_column_headers = [$columns, $hidden, $sortable];
         $this->items = $results;
 
         $this->set_pagination_args([
@@ -51,66 +118,52 @@ class AEV_Email_History_Table extends WP_List_Table {
         ]);
     }
 
-    public function column_default($item, $column_name) {
-        switch ($column_name) {
-            case 'email':
-                return $item[$column_name];
-            case 'syntax_valid':
-                return ($item[$column_name] ? '✔️' : '❌');
-            case 'mx_found':
-                return ($item[$column_name] ? '✔️' : '❌');
-            case 'provider':
-                return esc_html($item[$column_name]);
-            case 'smtp_check':
-                return ($item[$column_name] ? '✔️' : '❌');
-            case 'status':
-                return esc_html($item[$column_name]);
-            case 'checked_at':
-                return esc_html($item[$column_name]);
-            default:
-                return print_r($item, true);
+    public function process_bulk_action() {
+        if (empty($_REQUEST['email_ids'])) {
+            return;
         }
-    }
 
-    public function get_sortable_columns() {
-        return [
-            'email' => ['email', true],
-            'created_at' => ['created_at', false],
-        ];
-    }
+        $ids = array_map('intval', (array) $_REQUEST['email_ids']);
+        if (empty($ids)) return;
 
-    public function display() {
-        $this->display_tablenav('top');
+        global $wpdb;
+        $table = AEV_HISTORY_TABLE;
 
-        echo '<table class="wp-list-table widefat fixed striped">';
-        $this->print_column_headers();
+        if ($this->current_action() === 'delete') {
+            $in = implode(',', array_fill(0, count($ids), '%d'));
+            $wpdb->query($wpdb->prepare("DELETE FROM $table WHERE id IN ($in)", ...$ids));
+        }
 
-        echo '<tbody id="the-list">';
-        foreach ($this->items as $item) {
-            echo '<tr>';
-            foreach ($this->get_columns() as $column_name => $column_display_name) {
-                echo '<td>';
-                echo $this->column_default($item, $column_name);
-                echo '</td>';
+        if ($this->current_action() === 'export') {
+            $in = implode(',', array_fill(0, count($ids), '%d'));
+            $results = $wpdb->get_results(
+                $wpdb->prepare("SELECT * FROM $table WHERE id IN ($in)", ...$ids), ARRAY_A
+            );
+
+            // Clean output buffer
+            if (ob_get_length()) {
+                ob_end_clean();
             }
-            echo '</tr>';
-        }
-        echo '</tbody>';
 
-        echo '</table>';
+            // Output CSV headers
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment; filename="selected-emails.csv"');
+            header('Pragma: no-cache');
+            header('Expires: 0');
 
-        $this->display_tablenav('bottom');
-    }
+            // Output CSV content
+            $output = fopen('php://output', 'w');
 
-    public function extra_tablenav($which) {
-        if ($which === 'top') {
-            ?>
-            <div class="alignleft actions" style="margin-right: 10px;">
-                <form method="post" style="display:inline;">
-                    <?php submit_button('Export CSV', 'secondary', 'aev_export_csv', false); ?>
-                </form>
-            </div>
-            <?php
+            // Output column headings
+            fputcsv($output, array_keys($results[0]));
+
+            // Output rows
+            foreach ($results as $row) {
+                fputcsv($output, $row);
+            }
+
+            fclose($output);
+            exit;
         }
     }
 }

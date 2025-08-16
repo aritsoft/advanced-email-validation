@@ -2,10 +2,11 @@
 /**
  * Plugin Name: Advanced Email Validation
  * Description: A professional email validation tool with membership limits, history tracking.
+ * Author: Pluff Pixels
+ * Author URI: https://fluffpixels.com/
  * Version: 1.0
- * Author: Tahir Mahmood
  * Text Domain: advanced-email-validation
- */
+*/
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -24,7 +25,7 @@ class AdvancedEmailValidation {
         define('AEV_NEUTRINO_API_ID', get_option('aev_neutrino_api_user_id'));
         define('AEV_NEUTRINO_API_KEY', get_option('aev_neutrino_api_key'));
         define('AEV_HISTORY_TABLE', $GLOBALS['wpdb']->prefix . 'email_checker_history');
-        define('AEV_FREE_VALIDATION_LIMIT', 10);
+        define('AEV_FREE_VALIDATION_LIMIT', get_option('aev_free_email_limit'));
     }
 
     private function load_includes() {

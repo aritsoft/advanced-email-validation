@@ -54,22 +54,30 @@ function aev_render_settings_page() {
 }
 
 function aev_render_history_page() {
-
-    echo '<div class="wrap"><h1>Email Validation History</h1>';
-
     require_once AEV_PLUGIN_PATH . 'includes/classes/email-history-table.php';
     $table = new AEV_Email_History_Table();
     $table->prepare_items();
+    ?>
+    <div class="wrap">
+        <h1>Email Validation History</h1>
 
-    echo '<form method="post">';
-    echo '<input type="hidden" name="page" value="aev-email-history" />';
-    $table->search_box('Search Emails', 'email');
-    $table->display();
-    echo '</form>';
-    echo '</div>';
+        <form method="get">
+            <input type="hidden" name="page" value="<?php echo esc_attr($_REQUEST['page']); ?>" />
+            <?php $table->search_box('Search Email', 'email'); ?>
+        </form>
+
+        <form method="post">
+            <?php
+            // Render the bulk actions, export button, and table
+            $table->display();
+            ?>
+        </form>
+    </div>
+    <?php
 }
 
 function aev_handle_export_csv() {
+
     if (!current_user_can('manage_options') || !isset($_POST['aev_export_csv'])) {
         return;
     }
